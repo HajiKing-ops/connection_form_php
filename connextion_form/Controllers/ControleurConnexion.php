@@ -37,6 +37,7 @@ function control($pdo)
     $_SESSION['prenom'] = $res['prenom'];
     $_SESSION['email'] = $res['email'];
     $_SESSION['user_id'] = $res['id'];
+    $_SESSION['login'] = $res['login'];
        
     redirect_to_page('profile');
 }

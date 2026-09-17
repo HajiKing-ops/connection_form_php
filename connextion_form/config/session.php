@@ -22,7 +22,6 @@ function require_login()
         {
             redirect_to_page();
         }
-    redirect_to_page('profile');
 }
 
 function get_session_user()
@@ -33,7 +32,10 @@ function get_session_user()
         }
     return[
         'id' => $_SESSION['user_id'],
-        'nom' => $_SESSION['nom']
+        'nom' => $_SESSION['nom'],
+        'prenom' => $_SESSION['prenom'],
+        'email' => $_SESSION['email'],
+        'login' => $_SESSION['login'],
     ];
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class IncriptionModel
+class InscriptionModel
 {
     private $pdo;
     public function __construct($pdo)

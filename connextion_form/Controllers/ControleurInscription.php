@@ -1,12 +1,12 @@
 <?php
 
 require_once 'config/database.php';
-require_once 'Models/IncriptionModel.php';
+require_once 'Models/InscriptionModel.php';
 
 
   if($_SERVER['REQUEST_METHOD'] !== 'POST')
     {
-        require_once 'View/connexion/FormulaireIncription.php';
+        require_once 'View/connexion/FormulaireInscription.php';
         exit();
     }
     $nom = trim($_POST['nom'] ?? '');
@@ -18,11 +18,11 @@ require_once 'Models/IncriptionModel.php';
   if(empty($nom) || empty($prenom) || empty($email) || empty($login) || empty($mdp))
     {
       $error = "les champs est obligateur";
-      require_once 'View/connexion/FormulaireIncription.php';
+      require_once 'View/connexion/FormulaireInscription.php';
       return ;
     }
 
-    $create = new IncriptionModel($pdo);
+    $create = new InscriptionModel($pdo);
     $create -> createUser($nom, $prenom, $email, $login, $mdp);
     $success = "compt est cree";
 

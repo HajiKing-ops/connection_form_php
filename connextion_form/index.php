@@ -15,6 +15,9 @@ switch($page)
     case 'inscription':
         require_once 'Controllers/ControleurInscription.php';
         break;
+        case 'deconnexion':
+        require_once 'Controllers/ControleurDeconnexion.php';
+        break;
     default:
         require_once 'Controllers/ControleurConnexion.php';
         break;

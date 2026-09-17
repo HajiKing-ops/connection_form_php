@@ -27,6 +27,7 @@ class UtilisateurModel
                             'nom' => $user['nom'],
                             'email' => $user['email'],
                             'prenom' => $user['prenom'],
+                            'login' => $user['login'],
                         ];
                     }
                 return null;

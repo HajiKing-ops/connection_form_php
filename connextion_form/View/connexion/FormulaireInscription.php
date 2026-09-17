@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="public/css/FormulaireIncription.css">
+    <link rel="stylesheet" href="public/css/FormulaireInscription.css">
     <title>Formulaire d'inscription</title>
     
 </head>
