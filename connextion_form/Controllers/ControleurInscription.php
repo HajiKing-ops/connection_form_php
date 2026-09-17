@@ -4,7 +4,7 @@ require_once 'config/database.php';
 require_once 'Models/IncriptionModel.php';
 
 
-  if($_SERVER['REQUEST_METHOD'] === 'GET')
+  if($_SERVER['REQUEST_METHOD'] !== 'POST')
     {
         require_once 'View/connexion/FormulaireIncription.php';
         exit();

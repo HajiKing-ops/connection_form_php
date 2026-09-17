@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 function redirect_to_page($page = 'connexion')
 {
     header("Location: index.php?page=$page");
@@ -20,6 +22,7 @@ function require_login()
         {
             redirect_to_page();
         }
+    redirect_to_page('profile');
 }
 
 function get_session_user()

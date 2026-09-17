@@ -11,7 +11,7 @@
 
 <div class="container">
     <h2 class="h2">Créer un compte</h2>
-    <form action="index.php?page=incription" method="POST">
+    <form action="index.php?page=inscription" method="POST">
         <label>Nom :</label>
         <input type="text"  name="nom" placeholder="Votre nom" required>
 

@@ -18,7 +18,7 @@
         <button type="Submit" id="submit">submit</button><br></br>
     </form>
 
-    <form action="index.php?page=inscription" method="GET">
+    <form action="index.php?page=inscription" method="POST">
         <Button>incription</Button>
     </form>
 
