@@ -1,179 +1,304 @@
-# PHP Registration and Login Form
+# PHP Authentication System
 
-A small PHP application for creating an account, signing in, viewing a protected profile, and signing out. It uses a simple MVC-style structure, a MySQL/MariaDB database, PHP sessions, and custom CSS. Most form labels are in French.
+A small PHP authentication application using MariaDB through XAMPP with MySQL-compatible SQL with a French-language interface. Users can create an account, log in, view a protected profile, and log out. The code uses an MVC-style organization with separate controllers, models, views, configuration, and CSS files.
+
+This is a learning and portfolio project. It is not presented as production-ready software.
 
 ## Features
 
-- Registration with surname (`nom`), first name (`prenom`), email, login, and password.
-- Password hashing with `password_hash()` and verification with `password_verify()`.
-- Database queries using PDO prepared statements.
-- Login using a login name and password.
-- A protected profile displaying the signed-in user's name, email, and login.
-- Logout that clears session data, destroys the session, and expires the session cookie.
-- Database configuration loaded from a local `.env` file through `vlucas/phpdotenv`.
+### Implemented
 
-## Requirements
+- Account registration with name, first name, email, login, and password fields
+- Duplicate-login check before account creation
+- Password hashing with `password_hash()` and `PASSWORD_DEFAULT`
+- Password verification with `password_verify()`
+- PDO prepared statements for user queries and inserts
+- PHP session-based authentication
+- Protected profile page that redirects unauthenticated visitors to login
+- Profile output escaped with `htmlspecialchars(..., ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')`
+- Logout that clears the session, destroys it, expires the session cookie, and redirects to login
+- Failed-password recording for an existing login in `tentativeconnexion`
+- MariaDB/MySQL-compatible trigger-based limit of three recorded failed attempts per login during one hour
+- `PDOException` handling when the trigger rejects a failed-attempt insert
+- Separate CSS files for the login, registration, and profile pages
 
-- A PHP-enabled web server. The setup below uses XAMPP on Windows with Apache.
-- PHP with sessions, PDO, and the `pdo_mysql` extension enabled.
-- MySQL or MariaDB.
-- Composer, or the included `composer.phar`, to install PHP dependencies.
+### Not implemented
 
-The current code passed PHP syntax checks with the local XAMPP PHP 8.2.12 installation. Composer's installed dependency platform checks also passed in that environment.
+- CSRF tokens
+- Session ID regeneration after login
+- Explicit secure, HttpOnly, and SameSite session-cookie configuration
+- IP-based rate limiting
+- Email verification or password reset
+- Automated tests
 
-`package.json` lists `@dotenvx/dotenvx`, but the PHP application does not call it. Node.js, `npm install`, and a frontend build are not required for the current pages.
+## Technologies
 
-## Local setup with XAMPP
+- PHP
+- HTML5 and CSS3
+- PHP sessions
+- PDO with the MySQL driver
+- MariaDB via XAMPP (MySQL-compatible)
+- Apache through XAMPP for local development
+- Composer with `vlucas/phpdotenv` for environment-based database configuration
 
-### 1. Place the project in the web directory
+`package.json` also lists `@dotenvx/dotenvx`, but the application database configuration currently uses PHP dotenv through Composer.
 
-For the URLs used below, the application files should be located at:
-
-```text
-C:\xampp\htdocs\connection_form_php\connextion_form
-```
-
-Start **Apache** and **MySQL** from the XAMPP Control Panel.
-
-### 2. Install PHP dependencies
-
-In PowerShell, run:
-
-```powershell
-Set-Location 'C:\xampp\htdocs\connection_form_php\connextion_form'
-& 'C:\xampp\php\php.exe' composer.phar install
-```
-
-If Composer and the correct PHP executable are already on your PATH, you can use `composer install` instead. Installation creates the `vendor/autoload.php` file required by `config/database.php`.
-
-### 3. Create the database and table
-
-Open [local phpMyAdmin](http://localhost/phpmyadmin/) and use its SQL tab to run the following for a fresh installation:
-
-```sql
-CREATE DATABASE IF NOT EXISTS ex01
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_general_ci;
-
-USE ex01;
-
-CREATE TABLE Utilisateur (
-    nom VARCHAR(50) NOT NULL,
-    prenom VARCHAR(50) NOT NULL,
-    login VARCHAR(50) DEFAULT NULL,
-    email VARCHAR(80) NOT NULL,
-    mdp VARCHAR(250) NOT NULL,
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-```
-
-Skip table creation if you already have the application's table. `id` must be an auto-incrementing primary key because registration does not provide an ID in its insert query. `mdp` stores the password hash, not the original password.
-
-The included [form.sql](form.sql) is an alternative database dump containing the table definition and existing account records. It does not create or select the database, so select the target database before importing it. It also contains `DROP TABLE IF EXISTS utilisateur`, which replaces that table and its data. Do not import it over data you need to keep. The schema above lets you start without importing the dump's account records.
-
-The dump names the table `utilisateur`, while PHP queries use `Utilisateur`. This works with the current Windows database setup; see the portability notes below for systems that distinguish table-name case.
-
-### 4. Configure the database connection
-
-Create or edit `.env` beside `index.php` using these exact lowercase variable names:
-
-```dotenv
-servername=localhost
-username=root
-password=
-dbname=ex01
-```
-
-This example assumes a local database account named `root` with an empty password. Replace the values with your own database credentials. Keep real credentials out of version control.
-
-`config/database.php` reads these variables and creates the PDO connection. The current connection uses `charset=utf8`, enables exceptions for database errors, and returns fetched rows as associative arrays.
-
-### 5. Open the application
-
-- [Login](http://localhost/connection_form_php/connextion_form/index.php?page=connexion)
-- [Registration](http://localhost/connection_form_php/connextion_form/index.php?page=inscription)
-- [Profile](http://localhost/connection_form_php/connextion_form/index.php?page=profile) — requires login.
-
-Use these URLs through Apache rather than opening a PHP file directly from the filesystem. Adjust the path if you installed the project in another directory.
-
-## Project structure
+## Project Structure
 
 ```text
 connextion_form/
-|-- index.php                         # Routes requests using ?page=
 |-- config/
-|   |-- database.php                  # Environment variables and PDO connection
-|   `-- session.php                   # Session startup, login checks, redirects
+|   |-- database.php
+|   `-- session.php
+|-- database/
+|   `-- schema.sql
 |-- Controllers/
-|   |-- ControleurConnexion.php       # Processes login and fills the session
-|   |-- ControleurInscription.php     # Validates required fields and registers users
-|   |-- ControleurProfile.php         # Protects the profile and reads session data
-|   `-- ControleurDeconnexion.php     # Ends the session and returns to login
+|   |-- ControleurConnexion.php
+|   |-- ControleurDeconnexion.php
+|   |-- ControleurInscription.php
+|   `-- ControleurProfile.php
 |-- Models/
-|   |-- InscriptionModel.php           # Hashes passwords and inserts users
-|   `-- UtilisateurModel.php          # Finds users and checks their passwords
+|   |-- InscriptionModel.php
+|   `-- UtilisateurModel.php
 |-- View/
 |   |-- connexion/
 |   |   |-- FormulaireConnexion.php
-|   |   `-- FormulaireIncription.php
+|   |   `-- FormulaireInscription.php
 |   `-- Profile.php
-|-- public/css/                       # Styles for the two forms
-|-- .env                              # Local database settings
-|-- composer.json / composer.lock     # PHP dependency definitions
-|-- composer.phar                     # Bundled Composer executable
-|-- package.json / package-lock.json  # dotenvx dependency, unused by the PHP flow
-|-- form.sql                          # Database dump with account records
-`-- vendor/                           # Installed PHP dependencies
+|-- public/
+|   `-- css/
+|       |-- FormulaireConnexion.css
+|       |-- FormulaireInscription.css
+|       `-- Profile.css
+|-- index.php
+|-- composer.json
+|-- package.json
+`-- README.md
 ```
 
-## Request flow
+- `database/schema.sql` contains the versioned database schema and trigger definition.
+- `Controllers/` receives the request, calls the relevant model or session helper, and selects a view.
+- `Models/` contains registration and authentication database operations.
+- `View/` contains the login, registration, and profile HTML/PHP templates.
+- `public/css/` contains the page stylesheets.
+- `index.php` is the front controller and routes requests using the `page` query parameter.
+- `config/database.php` loads `.env` values and creates the PDO connection.
+- `config/session.php` starts the PHP session and provides login, redirect, and session-user helpers.
+- `composer.json` declares the PHP dotenv dependency. `package.json` contains the npm dependency metadata.
 
-`index.php` loads the database connection and session helpers, then chooses a controller from the `page` query parameter. Missing or unrecognized page values open the login controller.
+## Routes
 
-| Page parameter | Controller | Behavior |
-| --- | --- | --- |
-| `connexion` | `ControleurConnexion.php` | Displays the login form; handles login on POST. Already signed-in users are redirected to the profile. |
-| `inscription` | `ControleurInscription.php` | Displays the registration form on GET; validates and inserts a user on POST. |
-| `profile` | `ControleurProfile.php` | Requires a signed-in session and displays its user details. |
-| `deconnexion` | `ControleurDeconnexion.php` | Clears the session and returns to login. The profile button sends POST, although the controller does not restrict the request method. |
+| URL | Purpose |
+| --- | --- |
+| `index.php?page=connexion` | Display and process login |
+| `index.php?page=inscription` | Display and process registration |
+| `index.php?page=profile` | Display the protected profile |
+| `index.php?page=deconnexion` | Clear the session and return to login |
 
-### Registration
+An absent or unknown `page` value loads the login controller.
 
-The form sends `nom`, `prenom`, `email`, `login`, and `mdp`. The controller trims the text fields and rejects empty required values. `IncriptionModel::createUser()` hashes `mdp` and inserts the account with a prepared statement.
+## Application Flow
 
-After insertion, the controller includes the login view. It does not automatically sign in the new user or redirect the browser, so the address remains `?page=inscription`. A `$success` variable is set but is not displayed by the current login view.
-
-### Login and profile
-
-The login form sends `login` and `password`. `UtilisateurModel::authenticate()` finds an account by login and verifies the submitted password against its stored hash.
-
-On success, the controller stores `user_id`, `nom`, `prenom`, `email`, and `login` in `$_SESSION`, then redirects to the profile. `require_login()` redirects visitors without `user_id` to login; signed-in users continue to the profile view.
-
-## Manual verification
-
-1. Open the registration URL directly and create an account with a new test login.
-2. In phpMyAdmin, inspect the `Utilisateur` table. Confirm that the account exists, has an automatically assigned `id`, and has a hash in `mdp`.
-3. Sign in with that login and password. Confirm that the profile displays the matching name, email, and login.
-4. Click **Disconnect**. Confirm that the login page appears and reopening the profile redirects back to login.
-5. Try an incorrect password. Confirm that an error is displayed and access to the profile is not granted.
-
-For a local dependency check, run:
-
-```powershell
-& 'C:\xampp\php\php.exe' composer.phar check-platform-reqs
+```text
+Browser
+  -> index.php
+  -> Controller
+  -> Model or session helper
+  -> Database, when needed
+  -> View
+  -> Browser
 ```
 
-There is no automated application test suite configured. While preparing this README, all 12 application PHP files passed syntax checks and the installed Composer dependencies passed platform checks. Those checks do not verify the complete browser workflow; use the manual steps above for that.
+`index.php` selects a controller from `?page=`. Controllers process form requests and load views. Models perform database operations through PDO.
 
-## Known limitations and troubleshooting
+## Authentication Flow
 
-- **Required-field error when opening registration from the login page:** the registration button on the login page sends an empty POST request. The controller treats it as a registration submission. Opening `?page=inscription` directly with GET avoids that initial error.
-- **Duplicate accounts:** neither the supplied schema nor the registration code enforces unique logins or emails. Registration also lacks server-side email-format, field-length, and password-strength validation beyond its empty-field checks.
-- **Refreshing after registration:** the login view is rendered as the response to the registration POST. Refreshing and resubmitting that request can create another record.
-- **Missing login on an older session:** sessions created before the login field was stored will not gain it automatically. Log out and sign in again, or test in a fresh private browser session.
-- **`could not find driver`:** check that the PHP executable running the application has `pdo_mysql` enabled. Your terminal's `php` command may point to a different installation from XAMPP's PHP.
-- **Portability:** login controller includes use `formulaireConnexion.php`, the profile controller includes `profile.php`, and the login view links to `formulaireConnexion.css`. The actual filenames start with capital letters. These references, and the table-name case difference in the dump, need consistent casing on case-sensitive systems.
-- **HTML output:** profile values are printed without HTML escaping, allowing stored user input to be interpreted as markup. Escape displayed user data before making the application available to untrusted users.
-- **Session and form protection:** login does not regenerate the session ID, forms have no CSRF tokens, and there is no login rate limiting. These protections are not implemented in the current project.
-- **Database errors:** connection failures display exception details, and registration insert errors have no application-level handler. Error handling needs improvement before deployment.
+```text
+Login form
+  -> ControleurConnexion.php
+  -> UtilisateurModel::authenticate()
+  -> SELECT the user by login using a prepared statement
+  -> password_verify()
+  -> Store user data in $_SESSION
+  -> Redirect to index.php?page=profile
+```
+
+For an existing login and a wrong password, the model inserts a record into `tentativeconnexion`. If that insert is rejected by the database trigger, the model catches `PDOException` and returns the maximum-attempts message.
+
+## Registration Flow
+
+1. The registration form submits `nom`, `prenom`, `email`, `login`, and `mdp` with POST.
+2. The controller trims the text fields and checks that the required values are not empty.
+3. `InscriptionModel` checks whether the login already exists.
+4. The password is transformed with `password_hash($mdp, PASSWORD_DEFAULT)`.
+5. The model inserts the account with a PDO prepared statement.
+6. The login form is displayed after successful registration.
+
+The current server-side validation does not perform full email-format, length, or password-strength validation.
+
+## Failed Login Attempt Protection
+
+When an existing user submits the wrong password, the application attempts to insert the login into `TentativeConnexion` (referenced in PHP as `tentativeconnexion`). The MariaDB/MySQL-compatible `BEFORE INSERT` trigger counts recent records for that login. If three attempts already exist in the previous hour, the trigger raises SQLSTATE `45000`; PHP catches the resulting `PDOException` and reports the limit message.
+
+```text
+Wrong password
+  -> INSERT login into TentativeConnexion
+  -> BEFORE INSERT trigger
+  -> COUNT(*) for NEW.login during the last hour
+  -> count >= 3?
+       yes -> SIGNAL SQLSTATE '45000' -> PDOException in PHP
+       no  -> store the failed-attempt record
+```
+
+This is not complete brute-force protection. The current implementation only controls insertion of recorded failures for an existing login. It does not stop `password_verify()` from running after three failures, does not block a correct password after three failures, does not record unknown logins, and does not limit attempts by IP address.
+
+## Security
+
+### Password Security
+
+Registration stores a password hash created with `password_hash()` and `PASSWORD_DEFAULT`. Login compares the submitted password with that hash using `password_verify()`. Plaintext passwords are not intentionally stored by the application.
+
+### SQL Injection Protection
+
+Database queries use PDO prepared statements with bound parameters for login lookup, registration, and failed-attempt insertion. This separates user input from SQL syntax.
+
+### XSS Protection
+
+The profile view escapes session values with:
+
+```php
+htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+```
+
+This protects the displayed profile fields from being interpreted as HTML. Error messages in the current login and registration views are output directly, so output escaping is not applied consistently throughout the application.
+
+### Login Attempt Protection
+
+A database `BEFORE INSERT` trigger limits stored failed-password records to three per login in a rolling one-hour window. The trigger uses `NEW.login`, counts matching recent rows, and raises SQLSTATE `45000` when the limit is reached.
+
+### Session Security
+
+The application starts a PHP session, stores authenticated user information in `$_SESSION`, checks `user_id` before serving the profile, and clears and destroys the session during logout. Session ID regeneration after login and explicit cookie-hardening options are not currently implemented.
+
+## Database
+
+The project is currently tested with MariaDB through XAMPP and uses MySQL-compatible SQL. The database contains at least these tables:
+
+### `Utilisateur`
+
+Stores the account fields used by the application: `id`, `nom`, `prenom`, `email`, `login`, and the password hash in `mdp`.
+
+### `TentativeConnexion`
+
+Stores failed-password records with a login and a timestamp such as `date_tentative`. The trigger uses these records to count attempts from the last hour. The PHP model uses the lowercase spelling `tentativeconnexion`; keep table-name casing consistent on case-sensitive systems.
+
+The repository includes `database/schema.sql` as the versioned place for the database structure and trigger definition.
+
+## Trigger
+
+The relevant database logic is conceptually:
+
+```sql
+BEFORE INSERT ON TentativeConnexion
+
+COUNT(*)
+WHERE login = NEW.login
+  AND date_tentative >= NOW() - INTERVAL 1 HOUR
+
+IF count >= 3
+  -> SIGNAL SQLSTATE '45000'
+```
+
+The trigger rejects the fourth stored failure within the one-hour window. It does not itself authenticate users or prevent successful login with the correct password.
+
+## Installation
+
+1. Install XAMPP with Apache, PHP, and MySQL/MariaDB.
+2. Clone or place the project under the XAMPP `htdocs` directory.
+3. Start Apache and MySQL/MariaDB from the XAMPP control panel.
+4. Create the database, then import `database/schema.sql` to create the required tables and trigger.
+5. Install PHP dependencies from the project directory:
+
+   ```bash
+   composer install
+   ```
+
+6. Create a local `.env` file beside `index.php` with your own values:
+
+   ```dotenv
+   servername=localhost
+   username=your_database_user
+   password=your_database_password
+   dbname=your_database_name
+   ```
+
+   Never commit real credentials. Configure the web server so `.env` cannot be downloaded.
+
+7. Open the application through Apache, for example:
+
+   ```text
+   http://localhost/connection_form_php/connextion_form/index.php
+   ```
+
+The exact URL depends on the local folder name. Do not open the PHP files directly from the filesystem; the application expects to run through a PHP-enabled web server.
+
+## How to Test
+
+Use a dedicated local database and test account. Do not use real passwords or production data.
+
+1. **Registration:** open `page=inscription`, submit valid non-empty values, and confirm that the account is created.
+2. **Successful login:** log in with the new account and confirm that the profile page opens.
+3. **Wrong password:** use the correct login with an incorrect password and confirm that an invalid-credentials message is shown.
+4. **Failed attempts:** repeat the wrong-password test and inspect `TentativeConnexion` to confirm that failed attempts for an existing login are recorded.
+5. **Trigger behavior:** after three recent recorded failures for one login, submit another wrong password and confirm that SQLSTATE `45000` is raised by the trigger and handled by PHP.
+6. **Logout:** select logout and confirm that the session is cleared and the profile redirects to login.
+7. **Profile protection:** open `page=profile` without an authenticated session and confirm that it redirects to login.
+8. **XSS output escaping:** register or use a harmless value such as `<b>Test</b>` in a profile field. It should be displayed as text, not interpreted as bold HTML.
+
+## Known Limitations
+
+- A login that is not found currently returns `null` from the model while the controller expects an array, so this path can produce a PHP warning instead of a structured authentication error.
+- The failed-login trigger limits recorded failed-password inserts, not all login attempts. A correct password can still authenticate after three previous failures.
+- Unknown logins are not inserted into `TentativeConnexion`, so the mechanism does not cover repeated attempts against nonexistent accounts.
+- The current protection does not apply IP-based rate limiting.
+- CSRF tokens are not currently implemented for state-changing forms.
+- The session ID is not regenerated after authentication, and Secure, HttpOnly, and SameSite session-cookie options are not explicitly configured.
+- Registration validation checks required fields but does not yet fully validate email format, field lengths, or password strength.
+- Profile values are escaped, but output escaping is not yet applied consistently to every user-controlled message.
+- Database-level uniqueness for login or email is not established by the application code.
+- Database connection errors can still expose internal details in development.
+- The project does not yet include automated unit, integration, or end-to-end tests.
+- Some referenced filenames or table names use different capitalization conventions, which may cause issues on case-sensitive systems.
+- The interface and messages are primarily in French.
+
+## Future Improvements
+
+The following are future improvements and are **not currently implemented**:
+
+- Add CSRF tokens and server-side request validation to every state-changing form.
+- Regenerate the session ID after successful login and configure secure session cookies.
+- Enforce authentication throttling or temporary lockout consistently, including unknown logins and IP-based limits.
+- Add database constraints such as unique login/email rules and stronger validation for account data.
+- Escape all user-controlled output, including form error messages.
+- Replace browser-visible database errors with generic user messages and server-side logs.
+- Add automated tests for registration, authentication, sessions, the trigger, and output escaping.
+- Add email verification and password-reset workflows if the project grows beyond local learning use.
+
+## What I Learned
+
+This project provided practice with:
+
+- PHP request handling and PHP sessions
+- MVC-style separation between controllers, models, and views
+- PDO and prepared statements
+- Password hashing and password verification
+- Authentication and protected routes
+- MariaDB/MySQL-compatible triggers and `BEFORE INSERT`
+- Trigger values such as `NEW.login`
+- `SIGNAL SQLSTATE '45000'` and PDO exception handling
+- HTML output escaping and basic XSS prevention
+- Debugging the interaction between PHP and the database
+
+## Author
+
+Roman Salamzada

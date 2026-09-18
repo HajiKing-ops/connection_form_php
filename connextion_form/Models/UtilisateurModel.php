@@ -28,9 +28,28 @@ class UtilisateurModel
                             'email' => $user['email'],
                             'prenom' => $user['prenom'],
                             'login' => $user['login'],
+                            'success' => true,
                         ];
                     }
-                return null;
+                else {
+                 $query = "insert into tentativeconnexion (login) values (:login)";
+                 $st = $this -> pdo ->  prepare($query);
+                 try {
+                    $st -> execute([':login' => $login]);
+                 }catch(PDOException $e)
+                 {
+                    return [
+                        'success' => false,
+                        'error' => 'Maximum 3 tentatives par heure'
+                    ];
+                 }
+                 
+                 return [
+                    'success' => false,
+                    'error' => "invalide credentials"
+                 ];
+                }
+                
             }
     }
 }

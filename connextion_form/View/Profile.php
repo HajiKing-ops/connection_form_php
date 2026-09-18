@@ -17,24 +17,20 @@
 
         <div class="profile-info">
 
-            <p>
-                <strong>Nom :</strong>
-                <?php echo $nom; ?>
+           <p>Nom :
+                <?php echo htmlspecialchars($_SESSION['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
             </p>
 
-            <p>
-                <strong>Prénom :</strong>
-                <?php echo $prenom; ?>
+            <p>Prénom :
+                <?php echo htmlspecialchars($_SESSION['prenom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
             </p>
 
-            <p>
-                <strong>Email :</strong>
-                <?php echo $email; ?>
+            <p>Email :
+                <?php echo htmlspecialchars($_SESSION['email'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
             </p>
 
-            <p>
-                <strong>Login :</strong>
-                <?php echo $login; ?>
+            <p>Login :
+                <?php echo htmlspecialchars($_SESSION['login'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
             </p>
 
         </div>

@@ -27,9 +27,9 @@ function control($pdo)
         }
     $find = new UtilisateurModel($pdo);
     $res = $find -> authenticate($login, $password);
-    if($res === NULL)
+    if(!$res['success'])
         {
-            $error = "Invalide login or password";
+            $error = $res['error'];
             require_once 'View/connexion/formulaireConnexion.php';
             return; 
         }

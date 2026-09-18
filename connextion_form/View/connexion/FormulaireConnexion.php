@@ -40,11 +40,9 @@
             <span>ou</span>
         </div>
 
-        <form action="index.php?page=inscription" method="POST">
-            <button class="inscription">
-                Créer un compte
-            </button>
-        </form> 
+        <a href="index.php?page=inscription" class="inscription-link">
+            Créer un compte
+        </a>
 
     </div>
 
