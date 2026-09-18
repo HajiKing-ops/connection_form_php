@@ -1,28 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    
+
+    <link rel="stylesheet" href="public/css/Profile.css">
+
+    <title>Profil</title>
 </head>
+
 <body>
-    <header> <h1>Profile</h1>  </header>
-    <section>
-        <div class="container">
-            <p> Votre nom : <?php echo $nom ?></p> <br> 
-            <p> Votre prenom : <?php echo $prenom ?></p><br>
-            <p> Votre email : <?php echo $email ?></p><br> 
-            <p> Votre login : <?php echo $login ?></p><br>
+
+    <div class="container">
+
+        <h1>Mon profil</h1>
+
+        <div class="profile-info">
+
+            <p>
+                <strong>Nom :</strong>
+                <?php echo $nom; ?>
+            </p>
+
+            <p>
+                <strong>Prénom :</strong>
+                <?php echo $prenom; ?>
+            </p>
+
+            <p>
+                <strong>Email :</strong>
+                <?php echo $email; ?>
+            </p>
+
+            <p>
+                <strong>Login :</strong>
+                <?php echo $login; ?>
+            </p>
+
         </div>
-    </section>
-       <section>
+
         <form action="index.php?page=deconnexion" method="POST">
-            
-                <Button>Disconnect</Button>
-                
-                                    
+            <button type="submit" class="deconnexion">
+                Se déconnecter
+            </button>
         </form>
-    </section>
+
+    </div>
+
 </body>
 </html>

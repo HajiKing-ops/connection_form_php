@@ -17,14 +17,20 @@ require_once 'Models/InscriptionModel.php';
 
   if(empty($nom) || empty($prenom) || empty($email) || empty($login) || empty($mdp))
     {
-      $error = "les champs est obligateur";
       require_once 'View/connexion/FormulaireInscription.php';
       return ;
     }
 
     $create = new InscriptionModel($pdo);
-    $create -> createUser($nom, $prenom, $email, $login, $mdp);
+    $result = $create -> createUser($nom, $prenom, $email, $login, $mdp);
+    if(!$result['success'])
+      {
+        $error = $result['error'];
+        require_once 'View/connexion/FormulaireInscription.php';
+        return ;
+      }
     $success = "compt est cree";
+    
 
     require_once 'View/connexion/FormulaireConnexion.php';
     return;
