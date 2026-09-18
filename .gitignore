@@ -1,0 +1,22 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Composer dependencies and local Composer binary
+/vendor/
+/composer.phar
+
+# Node dependencies and local npm metadata
+/node_modules/
+
+# Local runtime output
+*.log
+*.cache
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.phpunit.result.cache
+.DS_Store
+Thumbs.db

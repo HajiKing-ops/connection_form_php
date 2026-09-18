@@ -41,12 +41,10 @@ This is a learning and portfolio project. It is not presented as production-read
 - Apache through XAMPP for local development
 - Composer with `vlucas/phpdotenv` for environment-based database configuration
 
-`package.json` also lists `@dotenvx/dotenvx`, but the application database configuration currently uses PHP dotenv through Composer.
-
 ## Project Structure
 
 ```text
-connextion_form/
+connection_form_php/
 |-- config/
 |   |-- database.php
 |   `-- session.php
@@ -72,7 +70,8 @@ connextion_form/
 |       `-- Profile.css
 |-- index.php
 |-- composer.json
-|-- package.json
+|-- composer.lock
+|-- .env.example
 `-- README.md
 ```
 
@@ -84,7 +83,7 @@ connextion_form/
 - `index.php` is the front controller and routes requests using the `page` query parameter.
 - `config/database.php` loads `.env` values and creates the PDO connection.
 - `config/session.php` starts the PHP session and provides login, redirect, and session-user helpers.
-- `composer.json` declares the PHP dotenv dependency. `package.json` contains the npm dependency metadata.
+- `composer.json` and `composer.lock` declare and lock the PHP dotenv dependency.
 
 ## Routes
 
@@ -237,7 +236,7 @@ The trigger rejects the fourth stored failure within the one-hour window. It doe
 7. Open the application through Apache, for example:
 
    ```text
-   http://localhost/connection_form_php/connextion_form/index.php
+    http://localhost/connection_form_php/index.php
    ```
 
 The exact URL depends on the local folder name. Do not open the PHP files directly from the filesystem; the application expects to run through a PHP-enabled web server.
