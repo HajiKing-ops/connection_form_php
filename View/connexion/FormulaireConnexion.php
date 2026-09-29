@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+                <input type="password"    id="password" name="password" placeholder="Votre mot de passe" required>
             </div>
 
             <button type="submit" class="connexion">
@@ -35,6 +35,7 @@
             </button>
 
         </form>
+        
 
         <div class="separator">
             <span>ou</span>

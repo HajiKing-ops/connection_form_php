@@ -33,6 +33,7 @@ function control($pdo)
             require_once 'View/connexion/formulaireConnexion.php';
             return; 
         }
+        
     $_SESSION['nom'] = $res['nom'];
     $_SESSION['prenom'] = $res['prenom'];
     $_SESSION['email'] = $res['email'];

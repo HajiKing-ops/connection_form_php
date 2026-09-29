@@ -34,6 +34,7 @@
             </p>
 
         </div>
+        
 
         <form action="index.php?page=deconnexion" method="POST">
             <button type="submit" class="deconnexion">

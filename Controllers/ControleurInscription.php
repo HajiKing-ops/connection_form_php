@@ -14,12 +14,27 @@ require_once 'Models/InscriptionModel.php';
     $email = trim($_POST['email'] ?? '');
     $login = trim($_POST['login'] ?? '');
     $mdp = $_POST['mdp']?? '';
+    if(filter_var($email,FILTER_VALIDATE_EMAIL) )
+      {
+        $error = "in valide email";
+        require_once 'View/connexion/FormulaireInscription.php';
+        return ;
+      }
+      if (strlen($mdp >= 12) || preg_match('/0-9/', $mdp))
+        {
+          require_once 'View/connexion/FormulaireInscription.php';
+          die("mini 12 char") ;
+        }
 
-  if(empty($nom) || empty($prenom) || empty($email) || empty($login) || empty($mdp))
+    
+
+
+  if(empty($nom) || empty($prenom) || empty($login) || empty($mdp))
     {
       require_once 'View/connexion/FormulaireInscription.php';
       return ;
     }
+    
 
     $create = new InscriptionModel($pdo);
     $result = $create -> createUser($nom, $prenom, $email, $login, $mdp);

@@ -42,6 +42,7 @@
                 name="email"
                 placeholder="votre@email.com"
                 required
+               
             >
 
             <label for="login">Login :</label>
@@ -60,6 +61,7 @@
                 name="mdp"
                 placeholder="Mot de passe"
                 required
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$"
             >
 
             <button type="submit" class="submit">
